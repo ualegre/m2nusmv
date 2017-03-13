@@ -1,0 +1,16 @@
+m2nusmv/target/antrun
+m2nusmv/target/archive-tmp
+m2nusmv/target/classes
+m2nusmv/target/lib
+m2nusmv/target/maven-archiver
+m2nusmv/target/apidocs/
+m2nusmv/target/javadoc-bundle-options/
+m2nusmv/target/maven-status/
+m2nusmv/target/generated-sources/
+m2nusmv/target/test-classes
+m2nusmv/target/*.jar
+m2nusmv/.settings
+m2nusmv/src/test
+/sonar-project.properties
+/.sonar/
+/target/
