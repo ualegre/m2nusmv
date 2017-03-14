@@ -6,6 +6,7 @@ import java.util.List;
 import edu.casetools.dcase.m2nusmv.data.elements.BoundedOperator;
 import edu.casetools.dcase.m2nusmv.data.elements.Event;
 import edu.casetools.dcase.m2nusmv.data.elements.Rule;
+import edu.casetools.dcase.m2nusmv.data.elements.Specification;
 import edu.casetools.dcase.m2nusmv.data.elements.State;
 
 public class MData {
@@ -18,17 +19,23 @@ public class MData {
     private List<Rule> strs;
     private List<Rule> ntrs;
     private List<BoundedOperator> bops;
-
+    private List<Specification> ctlspecs;
+    private List<Specification> ltlspecs;
+    private List<Specification> pslspecs;
+    
     public MData() {
-	initialiseLists();
+    	initialiseLists();
     }
 
     private void initialiseLists() {
-	states = new ArrayList<>();
-	events = new ArrayList<>();
-	strs = new ArrayList<>();
-	ntrs = new ArrayList<>();
-	bops = new ArrayList<>();
+		states = new ArrayList<>();
+		events = new ArrayList<>();
+		strs = new ArrayList<>();
+		ntrs = new ArrayList<>();
+		bops = new ArrayList<>();
+		ctlspecs = new ArrayList<>();
+		ltlspecs = new ArrayList<>();
+		pslspecs = new ArrayList<>();
 
     }
 
@@ -126,5 +133,9 @@ public class MData {
 	this.filePath = filepath;
 
     }
+
+	public List<Specification> getCtlSpecifications() {
+		return this.ctlspecs;
+	}
 
 }

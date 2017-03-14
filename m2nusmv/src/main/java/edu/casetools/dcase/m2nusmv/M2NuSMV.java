@@ -10,6 +10,7 @@ import edu.casetools.dcase.m2nusmv.data.MData;
 import edu.casetools.dcase.m2nusmv.data.elements.BoundedOperator;
 import edu.casetools.dcase.m2nusmv.data.elements.Rule;
 import edu.casetools.dcase.m2nusmv.data.elements.RuleElement;
+import edu.casetools.dcase.m2nusmv.data.elements.Specification;
 import edu.casetools.dcase.m2nusmv.data.elements.State;
 
 public class M2NuSMV {
@@ -17,26 +18,22 @@ public class M2NuSMV {
     private FileWriter filestream;
     private BufferedWriter writer;
     private MData data;
-
-    public M2NuSMV(String filename, MData data) throws IOException {
-	filestream = new FileWriter(filename);
-	writer = new BufferedWriter(filestream);
-	this.data = data;
-
+  
+    public M2NuSMV(String filename) throws IOException {
+		filestream = new FileWriter(filename);
+		writer = new BufferedWriter(filestream);
     }
+    
 
-    public void generate() throws IOException {
-	this.write();
-	this.writer.close();
-    }
-
-    private void write() throws IOException {
-	writeMainModule();
-	writer.append("\n");
-	writeStrongImmediatePastModule();
-	writeWeakImmediatePastModule();
-	writeStrongAbsolutePastModule();
-	writeWeakAbsolutePastModule();
+    public void writeModel(MData data) throws IOException {
+    	this.data = data;
+		writeMainModule();
+		writer.append("\n");
+		writeStrongImmediatePastModule();
+		writeWeakImmediatePastModule();
+		writeStrongAbsolutePastModule();
+		writeWeakAbsolutePastModule();
+		this.writer.close();
     }
 
     private void writeMainModule() throws IOException {
@@ -47,19 +44,20 @@ public class M2NuSMV {
     }
 
     protected void writeValueAssignations() throws IOException {
-	writer.append("ASSIGN\n");
-	writer.append("\tinit(time) := 0; \n");
-	generateInitialisations();
-	writer.append("\n");
-
-	for (Rule rule : data.getStrs())
-	    writeSTR(rule);
-
-	for (Rule rule : data.getNtrs())
-	    writeNTR(rule);
-
-	writer.append("\tnext(time) := case \r\n\t\t\t\t\t (time < " + data.getMaxIteration()
-		+ ") : time+1;\r\n\t\t\t\t\t TRUE : " + data.getMaxIteration() + ";\r\n\t\t\t\t  esac;\n");
+    	
+		writer.append("ASSIGN\n");
+		writer.append("\tinit(time) := 0; \n");
+		generateInitialisations();
+		writer.append("\n");
+	
+		for (Rule rule : data.getStrs())
+		    writeSTR(rule);
+	
+		for (Rule rule : data.getNtrs())
+		    writeNTR(rule);
+	
+		writer.append("\tnext(time) := case \r\n\t\t\t\t\t (time < " + data.getMaxIteration()
+			+ ") : time+1;\r\n\t\t\t\t\t TRUE : " + data.getMaxIteration() + ";\r\n\t\t\t\t  esac;\n");
 
     }
 
@@ -108,7 +106,8 @@ public class M2NuSMV {
     }
 
     protected void writeSpecifications() throws IOException {
-	/* To be implemented yet */
+		for(Specification specification : data.getCtlSpecifications())
+			writer.append("\tSPEC \n\t\t"+specification.getSpec());
     }
 
     protected void writeNTR(Rule rule) throws IOException {
@@ -198,5 +197,9 @@ public class M2NuSMV {
 	writer.append(
 		"MODULE weak_absolute_past(state,low_bound,upp_bound,t)\r\nVAR\r\n  veredict\t : boolean;\r\n  veredict_aux  : boolean;\r\n  live \t\t\t: boolean;\r\n  \r\nASSIGN\r\n  init(veredict_aux) := FALSE;\r\n  init(live) := FALSE;\r\n  \r\n  veredict := case\r\n\t\t\t\t(state=TRUE) & (t >= low_bound) & ( t <= upp_bound)  : TRUE;\r\n\t\t\t\tTRUE: veredict_aux;\r\n\t\t\t  esac;  \r\n\n  next(veredict_aux) := veredict;\t  \r\n\n  next(live) := \tcase\r\n\t\t\t\t\t\t(upp_bound >= t) : veredict;\r\n\t\t  \t\t\t\tTRUE: FALSE;\r\n\t\t\t\t    esac;\n\n\n");
     }
+
+    public MData getData() {
+		return data;
+	}
 
 }
