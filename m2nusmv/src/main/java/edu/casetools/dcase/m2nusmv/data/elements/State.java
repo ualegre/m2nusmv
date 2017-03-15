@@ -9,62 +9,62 @@ public class State {
     private boolean value;
 
     public State() {
-	id = "";
-	name = "";
-	initialValue = "";
-	this.setValue(false);
+		id = "";
+		name = "";
+		initialValue = "FALSE";
+		this.setValue(false);
     }
 
     public String getName() {
-	return name;
+    	return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+    	this.name = name;
     }
 
     public String getInitialValue() {
-	return initialValue.toUpperCase();
+    	return initialValue.toUpperCase();
     }
 
     public void setInitialValue(String initialValue) {
-	this.initialValue = initialValue;
-	if (initialValue.equalsIgnoreCase("false")) {
-	    value = false;
-	} else {
-	    value = true;
-	}
+    	this.initialValue = initialValue;
+    	if (("false").equalsIgnoreCase(initialValue)) {
+    		value = false;
+    	} else {
+    		value = true;
+    	}
     }
 
     public String getId() {
-	return id;
+    	return id;
     }
 
     public void setId(String id) {
-	this.id = id;
+    	this.id = id;
     }
 
     public boolean getValue() {
-	return value;
+    	return value;
     }
 
     public void setValue(boolean value) {
-	this.value = value;
+    	this.value = value;
     }
 
     public boolean isIndependent() {
-	return isIndependent;
+    	return isIndependent;
     }
 
     public void setIndepedence(boolean isIndependent) {
-	this.isIndependent = isIndependent;
+    	this.isIndependent = isIndependent;
     }
 
     public void setIndepedence(String isIndependent) {
-	if (isIndependent.equalsIgnoreCase("true"))
-	    this.isIndependent = true;
-	else
-	    this.isIndependent = false;
+		if (("true").equalsIgnoreCase(isIndependent))
+		    this.isIndependent = true;
+		else
+		    this.isIndependent = false;
     }
 
 }

@@ -6,24 +6,24 @@ public class RuleElement {
     private String status;
 
     public RuleElement() {
-	name = "";
-	status = "";
+		name = "";
+		status = "";
     }
 
     public String getName() {
-	return name;
+    	return name;
     }
 
     public void setName(String name) {
-	this.name = name;
+    	this.name = name;
     }
 
     public String getStatus() {
-	return status;
+    	return status;
     }
 
     public void setStatus(String status) {
-	this.status = status;
+    	this.status = status;
     }
 
 }

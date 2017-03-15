@@ -8,49 +8,49 @@ public class Event {
     private String stateValue;
 
     public Event() {
-	id = "";
-	stateId = "";
-	time = "";
-	stateValue = "";
+		id = "";
+		stateId = "";
+		time = "";
+		stateValue = "";
     }
 
     public Event(String id, String stateId, String time, String stateValue) {
-	id = "";
-	stateId = "";
-	time = "";
-	stateValue = "";
+		this.id = id;
+		this.stateId = stateId;
+		this.time = time;
+		this.stateValue = stateValue;
     }
 
     public String getId() {
-	return id;
+    	return id;
     }
 
     public void setId(String id) {
-	this.id = id;
+    	this.id = id;
     }
 
     public String getStateId() {
-	return stateId;
+    	return stateId;
     }
 
     public void setStateId(String stateId) {
-	this.stateId = stateId;
+    	this.stateId = stateId;
     }
 
     public String getTime() {
-	return time;
+    	return time;
     }
 
     public void setTime(String time) {
-	this.time = time;
+    	this.time = time;
     }
 
     public String getStateValue() {
-	return stateValue;
+    	return stateValue;
     }
 
     public void setStateValue(String status) {
-	this.stateValue = status;
+    	this.stateValue = status;
     }
 
 }
