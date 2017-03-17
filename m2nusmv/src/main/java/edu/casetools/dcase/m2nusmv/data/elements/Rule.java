@@ -22,36 +22,58 @@ import java.util.List;
 public class Rule {
     private String id;
     private List<RuleElement> antecedents;
+    private List<BoundedOperator> bops;
+    private List<Rule> similarRules;
     private RuleElement consequent;
 
     public Rule() {
-	id = "";
-	antecedents = new ArrayList<>();
-	consequent = new RuleElement();
+		id = "";
+		antecedents  = new ArrayList<>();
+		bops  = new ArrayList<>();
+		consequent   = new RuleElement();
+		similarRules = new ArrayList<>();
     }
 
     public String getId() {
-	return id;
+    	return id;
     }
 
     public void setId(String id) {
-	this.id = id;
+    	this.id = id;
     }
 
     public List<RuleElement> getAntecedents() {
-	return antecedents;
+    	return antecedents;
     }
 
     public void setAntecedents(List<RuleElement> antecedents) {
-	this.antecedents = antecedents;
+    	this.antecedents = antecedents;
     }
 
     public RuleElement getConsequent() {
-	return consequent;
+    	return consequent;
     }
 
     public void setConsequent(RuleElement consequent) {
-	this.consequent = consequent;
+    	this.consequent = consequent;
     }
 
+	public List<Rule> getSimilarRules() {
+		return similarRules;
+	}
+
+	public void setSimilarRules(List<Rule> similarRules) {
+		this.similarRules = similarRules;
+	}
+
+	public List<BoundedOperator> getBops() {
+		return bops;
+	}
+
+	public void setBops(List<BoundedOperator> bop) {
+		this.bops = bop;
+	}
+
+	
+    
 }

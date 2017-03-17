@@ -27,35 +27,55 @@ import edu.casetools.dcase.m2nusmv.data.elements.BoundedOperator;
 import edu.casetools.dcase.m2nusmv.data.elements.Rule;
 import edu.casetools.dcase.m2nusmv.data.elements.Specification;
 import edu.casetools.dcase.m2nusmv.data.elements.State;
+import edu.casetools.dcase.m2nusmv.data.elements.BoundedOperator.BOP_TYPE;
 
 public class M2NuSMV {
 
     private FileWriter filestream;
     private BufferedWriter writer;
     private MData data;
-  
-    public M2NuSMV(String filename) throws IOException {
-		filestream = new FileWriter(filename);
-		writer = new BufferedWriter(filestream);
-    }
-    
 
     public void writeModel(MData data) throws IOException {
-    	this.data = data;
+    	initialiseData(data);  	
 		writeMainModule();
-		writer.append("\n");
-		writeStrongImmediatePastModule();
-		writeWeakImmediatePastModule();
-		writeStrongAbsolutePastModule();
-		writeWeakAbsolutePastModule();
-		this.writer.close();
+		writeBopModules(data);
+		writer.close();
     }
+
+
+	private void initialiseData(MData data) {
+
+		try {
+			this.data = data;
+			this.data.groupStrs();
+			this.data.groupNtrs();
+			filestream = new FileWriter(data.getFilePath());
+			writer = new BufferedWriter(filestream);			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+
+	private void writeBopModules(MData data) throws IOException {
+		if(data.getBopNumber(BOP_TYPE.STRONG_IMMEDIATE_PAST) > 0)
+			writeStrongImmediatePastModule();
+		if(data.getBopNumber(BOP_TYPE.WEAK_IMMEDIATE_PAST) > 0)
+			writeWeakImmediatePastModule();
+		if(data.getBopNumber(BOP_TYPE.STRONG_ABSOLUTE_PAST) > 0)
+			writeStrongAbsolutePastModule();
+		if(data.getBopNumber(BOP_TYPE.WEAK_ABSOLUTE_PAST) > 0)
+			writeWeakAbsolutePastModule();
+	}
 
     private void writeMainModule() throws IOException {
 		writer.append("MODULE main \n");
 		writeVariables();
 		writeValueAssignations();
 		writeSpecifications();
+		this.writer.append("\n");
     }
 
     protected void writeValueAssignations() throws IOException {
@@ -143,6 +163,7 @@ public class M2NuSMV {
     protected void writeNTR(Rule rule) throws IOException {
 		writer.append("\tnext(" + rule.getConsequent().getName() + ") := case\n");
 		writeRule(rule);
+		writeSimilarRules(rule);
 		writer.append("\t\t\t\t\t\tTRUE : " + rule.getConsequent().getName() + ";\n");
 		writer.append("\t\t\t\t    esac;\n\n");
     }
@@ -150,23 +171,38 @@ public class M2NuSMV {
     protected void writeSTR(Rule rule) throws IOException {
 		writer.append("\t" + rule.getConsequent().getName() + " := case\n");
 		writeRule(rule);
+		writeSimilarRules(rule);
 		writer.append("\t\t\t\tTRUE : " + rule.getConsequent().getName() + "_aux;\n");
 		writer.append("\t\t\t  esac;\n\n");
 		writer.append(
 			"\tnext(" + rule.getConsequent().getName() + "_aux) := " + rule.getConsequent().getName() + ";\n\n");
     }
 
-    private void writeRule(Rule rule) throws IOException {
+	private void writeSimilarRules(Rule rule) throws IOException {
+		for (Rule similarRule : rule.getSimilarRules()) {
+			writeRule(similarRule);
+		}	
+	}
+
+	private void writeRule(Rule rule) throws IOException {
+		boolean hasStateAntecedents = false;
 		for (int i = 0; i < rule.getAntecedents().size(); i++) {
-		    writeHeader(i);
+		    writeHeader(i,hasStateAntecedents);
 		    writer.append("(" + rule.getAntecedents().get(i).getName() + " = "
 			    + rule.getAntecedents().get(i).getStatus().toUpperCase() + ")");
+		    hasStateAntecedents = true;
 		}
+		
+		for (int i = 0; i < rule.getBops().size(); i++) {
+		    writeHeader(i,hasStateAntecedents);
+		    writer.append("(" + rule.getBops().get(i).getOperatorName()+".live" + " = TRUE )");
+		}
+		
 		writer.append(": " + rule.getConsequent().getStatus().toUpperCase() + ";\n");
     }
 
-    private void writeHeader(int i) throws IOException {
-		if (i == 0)
+    private void writeHeader(int i, boolean hasAntecedents) throws IOException {
+		if ((i == 0) && (!hasAntecedents))
 		    writer.append("\t\t\t\t");
 		else
 		    writer.append(" & ");
@@ -175,30 +211,37 @@ public class M2NuSMV {
     protected void writeTemporalOperatorVariables(BoundedOperator bop) throws IOException {
 		switch (bop.getType()) {
 			case STRONG_IMMEDIATE_PAST:
-			    writeOperator(bop.getOperatorName(), "strong_immediate_past", bop.getStateName(), bop.getLowBound());
+			    writeOperator(bop.getOperatorName(), "strong_immediate_past", bop.getStateName(), bop.getLowBound(), bop.getStatus());
 			    break;
 			case WEAK_IMMEDIATE_PAST:
-			    writeOperator(bop.getOperatorName(), "weak_immediate_past", bop.getStateName(), bop.getLowBound());
+			    writeOperator(bop.getOperatorName(), "weak_immediate_past", bop.getStateName(), bop.getLowBound(), bop.getStatus());
 			    break;
 			case STRONG_ABSOLUTE_PAST:
 			    writeOperator(bop.getOperatorName(), "strong_absolute_past", bop.getStateName(),
-				    bop.getLowBound() + "," + bop.getUppBound() + ",time");
+				    bop.getLowBound() + "," + bop.getUppBound() + ",time", bop.getStatus());
 			    break;
 			case WEAK_ABSOLUTE_PAST:
 			    writeOperator(bop.getOperatorName(), "weak_absolute_past", bop.getStateName(),
-				    bop.getLowBound() + "," + bop.getUppBound() + ",time");
+				    bop.getLowBound() + "," + bop.getUppBound() + ",time", bop.getStatus());
 			    break;
 			default:
 			    break;
 		}
     }
 
-    private void writeOperator(String operatorName, String operatorType, String stateName, String bound)
+    private void writeOperator(String operatorName, String operatorType, String stateName, String bound, String status)
 	    throws IOException {
-    	writer.append("\t" + operatorName + " : " + operatorType + "(" + stateName + "," + bound + "); \n");
+    	writer.append("\t" + operatorName + " : " + operatorType + "("+getBopStatus(status)+stateName + "," + bound + "); \n");
     }
 
-    protected void writeStateVariable(State state) throws IOException {
+    private String getBopStatus(String status) {
+		if("FALSE".equalsIgnoreCase(status)){
+			return "!";
+		} else return "";
+	}
+
+
+	protected void writeStateVariable(State state) throws IOException {
     	writer.append("\t" + state.getName() + " : boolean; \n");
     }
 

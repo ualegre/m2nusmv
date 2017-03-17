@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.casetools.dcase.m2nusmv.data.elements.BoundedOperator;
-import edu.casetools.dcase.m2nusmv.data.elements.Event;
 import edu.casetools.dcase.m2nusmv.data.elements.Rule;
 import edu.casetools.dcase.m2nusmv.data.elements.Specification;
 import edu.casetools.dcase.m2nusmv.data.elements.State;
@@ -31,7 +30,6 @@ public class MData {
     private String filePath;
     private List<State> states;
     private List<State> independentStates;
-    private List<Event> events;
     private List<Rule> strs;
     private List<Rule> ntrs;
     private List<BoundedOperator> bops;
@@ -45,7 +43,6 @@ public class MData {
 
     private void initialiseLists() {
 		states = new ArrayList<>();
-		events = new ArrayList<>();
 		strs = new ArrayList<>();
 		ntrs = new ArrayList<>();
 		bops = new ArrayList<>();
@@ -82,14 +79,6 @@ public class MData {
 
     public void setStates(List<State> states) {
     	this.states = states;
-    }
-
-    public List<Event> getEvents() {
-    	return events;
-    }
-
-    public void setEvents(List<Event> events) {
-    	this.events = events;
     }
 
     public List<Rule> getStrs() {
@@ -142,12 +131,6 @@ public class MData {
     	this.filePath = filePath;
     }
 
-    public void initialiseTestCase(String filepath) {
-		events = new ArrayList<>();
-		getIndependentStates();
-		this.filePath = filepath;
-    }
-
 	public List<Specification> getCtlSpecifications() {
 		return this.ctlspecs;
 	}
@@ -167,5 +150,48 @@ public class MData {
 	public void setPslspecs(List<Specification> pslspecs) {
 		this.pslspecs = pslspecs;
 	}
+	
+	public void groupStrs(){
+		List<Rule> toRemove = new ArrayList<>();
+		int limit = 0;
+		if(!strs.isEmpty()) 
+				limit = 1;
+		
+		for(Rule rule : strs){
+			for(int j = limit; j < strs.size(); j++){
+				if(rule.getConsequent().getName().equals(strs.get(j).getConsequent().getName())){
+						rule.getSimilarRules().add(strs.get(j));
+						toRemove.add(strs.get(j));
+				}
+			}
+			limit++;
+		}
+		
+		for(Rule rule : toRemove){
+			strs.remove(rule);
+		}
+	}
+	
+	public void groupNtrs(){
+		List<Rule> toRemove = new ArrayList<>();
+		int limit = 0;
+		if(!ntrs.isEmpty()) 
+				limit = 1;
+		
+		for(Rule rule : ntrs){
+			for(int j = limit; j < ntrs.size(); j++){
+				if(rule.getConsequent().getName().equals(ntrs.get(j).getConsequent().getName())){
+						rule.getSimilarRules().add(ntrs.get(j));
+						toRemove.add(ntrs.get(j));
+				}
+			}
+			limit++;
+		}
+		
+		for(Rule rule : toRemove){
+			ntrs.remove(rule);
+		}
+	}
+
 
 }
