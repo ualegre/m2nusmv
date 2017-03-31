@@ -100,12 +100,14 @@ public class M2NuSMV {
     	List<State> auxiliaryStates = new ArrayList<>();
 		auxiliaryStates = getStates(auxiliaryStates,data.getStrs());
 		for (State state : auxiliaryStates) {
-		    writeInitialisation(state.getName() + "_aux", state.getInitialValue());
+		    if (!state.isIndependent())
+		    	writeInitialisation(state.getName() + "_aux", state.getInitialValue());
 		}
 		auxiliaryStates = new ArrayList<>();
 		auxiliaryStates = getStates(auxiliaryStates,data.getNtrs());
 		for (State state : auxiliaryStates) {
-		    writeInitialisation(state.getName(), state.getInitialValue());
+		    if (!state.isIndependent())
+		    	writeInitialisation(state.getName(), state.getInitialValue());
 		}
 
     }
