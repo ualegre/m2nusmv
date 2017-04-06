@@ -33,165 +33,144 @@ public class MData {
     private List<Rule> strs;
     private List<Rule> ntrs;
     private List<BoundedOperator> bops;
-    private List<Specification> ctlspecs;
-    private List<Specification> ltlspecs;
-    private List<Specification> pslspecs;
-    
+    private List<Specification> specs;
+
     public MData() {
-    	initialiseLists();
+	initialiseLists();
     }
 
     private void initialiseLists() {
-		states = new ArrayList<>();
-		strs = new ArrayList<>();
-		ntrs = new ArrayList<>();
-		bops = new ArrayList<>();
-		ctlspecs = new ArrayList<>();
-		setLtlspecs(new ArrayList<>());
-		setPslspecs(new ArrayList<>());
+	states = new ArrayList<>();
+	strs = new ArrayList<>();
+	ntrs = new ArrayList<>();
+	bops = new ArrayList<>();
+	specs = new ArrayList<>();
     }
 
     public int getMaxIteration() {
-    	return maxIteration;
+	return maxIteration;
     }
 
     public void setMaxIteration(int maxIteration) {
-    	this.maxIteration = maxIteration;
+	this.maxIteration = maxIteration;
     }
 
     public void setIndependentStates(List<State> independentStates) {
-    	this.independentStates = independentStates;
+	this.independentStates = independentStates;
     }
 
     public List<State> getIndependentStates() {
-		independentStates = new ArrayList<>();
-		for (int i = 0; i < states.size(); i++) {
-		    if (states.get(i).isIndependent()) {
-			independentStates.add(states.get(i));
-		    }
-		}
-		return independentStates;
+	independentStates = new ArrayList<>();
+	for (int i = 0; i < states.size(); i++) {
+	    if (states.get(i).isIndependent()) {
+		independentStates.add(states.get(i));
+	    }
+	}
+	return independentStates;
     }
 
     public List<State> getStates() {
-    	return states;
+	return states;
     }
 
     public void setStates(List<State> states) {
-    	this.states = states;
+	this.states = states;
     }
 
     public List<Rule> getStrs() {
-    	return strs;
+	return strs;
     }
 
     public void setStrs(List<Rule> strs) {
-    	this.strs = strs;
+	this.strs = strs;
     }
 
     public List<Rule> getNtrs() {
-    	return ntrs;
+	return ntrs;
     }
 
     public void setNtrs(List<Rule> ntrs) {
-    	this.ntrs = ntrs;
+	this.ntrs = ntrs;
     }
 
     public List<BoundedOperator> getBops() {
-    	return bops;
+	return bops;
     }
 
     public List<BoundedOperator> getBops(BoundedOperator.BOP_TYPE type) {
-		List<BoundedOperator> list = new ArrayList<>();
-		for (int i = 0; i < bops.size(); i++) {
-		    if (bops.get(i).getType() == type)
-			list.add(bops.get(i));
-		}
-		return list;
+	List<BoundedOperator> list = new ArrayList<>();
+	for (int i = 0; i < bops.size(); i++) {
+	    if (bops.get(i).getType() == type)
+		list.add(bops.get(i));
+	}
+	return list;
     }
 
     public void setBops(List<BoundedOperator> bops) {
-    	this.bops = bops;
+	this.bops = bops;
     }
 
     public int getBopNumber(BoundedOperator.BOP_TYPE type) {
-		int result = 0;
-		for (int i = 0; i < bops.size(); i++) {
-		    if (bops.get(i).getType() == type)
-			result++;
-		}
-		return result;
+	int result = 0;
+	for (int i = 0; i < bops.size(); i++) {
+	    if (bops.get(i).getType() == type)
+		result++;
+	}
+	return result;
     }
 
     public String getFilePath() {
-    	return filePath;
+	return filePath;
     }
 
     public void setFilePath(String filePath) {
-    	this.filePath = filePath;
+	this.filePath = filePath;
     }
 
-	public List<Specification> getCtlSpecifications() {
-		return this.ctlspecs;
-	}
+    public List<Specification> getSpecifications() {
+	return this.specs;
+    }
 
-	public List<Specification> getLtlspecs() {
-		return ltlspecs;
-	}
+    public void groupStrs() {
+	List<Rule> toRemove = new ArrayList<>();
+	int limit = 0;
+	if (!strs.isEmpty())
+	    limit = 1;
 
-	public void setLtlspecs(List<Specification> ltlspecs) {
-		this.ltlspecs = ltlspecs;
-	}
-
-	public List<Specification> getPslspecs() {
-		return pslspecs;
-	}
-
-	public void setPslspecs(List<Specification> pslspecs) {
-		this.pslspecs = pslspecs;
-	}
-	
-	public void groupStrs(){
-		List<Rule> toRemove = new ArrayList<>();
-		int limit = 0;
-		if(!strs.isEmpty()) 
-				limit = 1;
-		
-		for(Rule rule : strs){
-			for(int j = limit; j < strs.size(); j++){
-				if(rule.getConsequent().getName().equals(strs.get(j).getConsequent().getName())){
-						rule.getSimilarRules().add(strs.get(j));
-						toRemove.add(strs.get(j));
-				}
-			}
-			limit++;
+	for (Rule rule : strs) {
+	    for (int j = limit; j < strs.size(); j++) {
+		if (rule.getConsequent().getName().equals(strs.get(j).getConsequent().getName())) {
+		    rule.getSimilarRules().add(strs.get(j));
+		    toRemove.add(strs.get(j));
 		}
-		
-		for(Rule rule : toRemove){
-			strs.remove(rule);
-		}
-	}
-	
-	public void groupNtrs(){
-		List<Rule> toRemove = new ArrayList<>();
-		int limit = 0;
-		if(!ntrs.isEmpty()) 
-				limit = 1;
-		
-		for(Rule rule : ntrs){
-			for(int j = limit; j < ntrs.size(); j++){
-				if(rule.getConsequent().getName().equals(ntrs.get(j).getConsequent().getName())){
-						rule.getSimilarRules().add(ntrs.get(j));
-						toRemove.add(ntrs.get(j));
-				}
-			}
-			limit++;
-		}
-		
-		for(Rule rule : toRemove){
-			ntrs.remove(rule);
-		}
+	    }
+	    limit++;
 	}
 
+	for (Rule rule : toRemove) {
+	    strs.remove(rule);
+	}
+    }
+
+    public void groupNtrs() {
+	List<Rule> toRemove = new ArrayList<>();
+	int limit = 0;
+	if (!ntrs.isEmpty())
+	    limit = 1;
+
+	for (Rule rule : ntrs) {
+	    for (int j = limit; j < ntrs.size(); j++) {
+		if (rule.getConsequent().getName().equals(ntrs.get(j).getConsequent().getName())) {
+		    rule.getSimilarRules().add(ntrs.get(j));
+		    toRemove.add(ntrs.get(j));
+		}
+	    }
+	    limit++;
+	}
+
+	for (Rule rule : toRemove) {
+	    ntrs.remove(rule);
+	}
+    }
 
 }
