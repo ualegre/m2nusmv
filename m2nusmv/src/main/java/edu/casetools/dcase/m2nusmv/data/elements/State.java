@@ -35,7 +35,7 @@ public class State {
     }
 
     public void setName(String name) {
-    	this.name = name;
+    	this.name = name.replaceAll("\\s+","_");
     }
 
     public void setInitialValue(String initialValue) {

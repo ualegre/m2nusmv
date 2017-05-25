@@ -84,7 +84,7 @@ public class BoundedOperator {
     }
 
     public void setStateName(String stateName) {
-    	this.stateName = stateName;
+    	this.stateName = stateName.replaceAll("\\s+","_");
     }
     
 	public String getOperatorName() {

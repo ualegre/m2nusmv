@@ -31,7 +31,7 @@ public class RuleElement {
     }
 
     public void setName(String name) {
-    	this.name = name;
+    	this.name = name.replaceAll("\\s+","_");
     }
 
     public String getStatus() {
