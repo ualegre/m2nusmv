@@ -203,7 +203,7 @@ public class M2NuSMV {
 		boolean hasStateAntecedents = false;
 		for (int i = 0; i < rule.getAntecedents().size(); i++) {
 		    writeHeader(i, hasStateAntecedents);
-		    writer.append("(" + rule.getAntecedents().get(i).getName() + " = "
+		    writer.append("(" + rule.getAntecedents().get(i).getName() + checkConsequent(rule,i) + " = "
 			    + rule.getAntecedents().get(i).getStatus().toUpperCase() + ")");
 		    hasStateAntecedents = true;
 		}
@@ -224,7 +224,14 @@ public class M2NuSMV {
 	
 		writer.append(": " + rule.getConsequent().getStatus().toUpperCase() + ";\n");
 	}
-	
+
+	private String checkConsequent(Rule rule, int i) {
+		if(rule.getAntecedents().get(i).getName().equals(rule.getConsequent().getName()))
+			return "_aux";
+		else
+			return "";
+	}
+
 	private void writeHeader(int i, boolean hasAntecedents) throws IOException {
 		if ((i == 0) && (!hasAntecedents))
 		    writer.append("\t\t\t\t");
