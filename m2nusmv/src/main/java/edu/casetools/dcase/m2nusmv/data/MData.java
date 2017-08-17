@@ -40,11 +40,11 @@ public class MData {
     }
 
     private void initialiseLists() {
-	states = new ArrayList<>();
-	strs = new ArrayList<>();
-	ntrs = new ArrayList<>();
-	bops = new ArrayList<>();
-	specs = new ArrayList<>();
+		states = new ArrayList<>();
+		strs = new ArrayList<>();
+		ntrs = new ArrayList<>();
+		bops = new ArrayList<>();
+		specs = new ArrayList<>();
     }
 
     public int getMaxIteration() {
@@ -140,7 +140,7 @@ public class MData {
 	for (Rule rule : strs) {
 	    for (int j = limit; j < strs.size(); j++) {
 		if (rule.getConsequent().getName().equals(strs.get(j).getConsequent().getName())) {
-		    rule.getSimilarRules().add(strs.get(j));
+		    rule.getSameConsequentRules().add(strs.get(j));
 		    toRemove.add(strs.get(j));
 		}
 	    }
@@ -161,7 +161,7 @@ public class MData {
 	for (Rule rule : ntrs) {
 	    for (int j = limit; j < ntrs.size(); j++) {
 		if (rule.getConsequent().getName().equals(ntrs.get(j).getConsequent().getName())) {
-		    rule.getSimilarRules().add(ntrs.get(j));
+		    rule.getSameConsequentRules().add(ntrs.get(j));
 		    toRemove.add(ntrs.get(j));
 		}
 	    }

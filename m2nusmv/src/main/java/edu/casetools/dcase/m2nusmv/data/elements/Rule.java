@@ -19,11 +19,14 @@ package edu.casetools.dcase.m2nusmv.data.elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.casetools.dcase.m2nusmv.data.elements.Time;
+
 public class Rule {
     private String id;
     private List<RuleElement> antecedents;
     private List<BoundedOperator> bops;
-    private List<Rule> similarRules;
+    private List<Rule> sameConsequentRules;
+    private List<Time> timeReferences;
     private RuleElement consequent;
 
     public Rule() {
@@ -31,7 +34,9 @@ public class Rule {
 		antecedents  = new ArrayList<>();
 		bops  = new ArrayList<>();
 		consequent   = new RuleElement();
-		similarRules = new ArrayList<>();
+		sameConsequentRules = new ArrayList<>();
+		timeReferences = new ArrayList<>();		
+		
     }
 
     public String getId() {
@@ -58,12 +63,12 @@ public class Rule {
     	this.consequent = consequent;
     }
 
-	public List<Rule> getSimilarRules() {
-		return similarRules;
+	public List<Rule> getSameConsequentRules() {
+		return sameConsequentRules;
 	}
 
-	public void setSimilarRules(List<Rule> similarRules) {
-		this.similarRules = similarRules;
+	public void setSameConsequentRules(List<Rule> sameConsequentRules) {
+		this.sameConsequentRules = sameConsequentRules;
 	}
 
 	public List<BoundedOperator> getBops() {
@@ -72,6 +77,14 @@ public class Rule {
 
 	public void setBops(List<BoundedOperator> bop) {
 		this.bops = bop;
+	}
+
+	public List<Time> getTimeReferences() {
+		return timeReferences;
+	}
+
+	public void setTimeReferences(List<Time> timeReferences) {
+		this.timeReferences = timeReferences;
 	}
 
 	
