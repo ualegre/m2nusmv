@@ -26,6 +26,7 @@ import edu.casetools.dcase.m2nusmv.data.MData;
 import edu.casetools.dcase.m2nusmv.data.elements.BoundedOperator;
 import edu.casetools.dcase.m2nusmv.data.elements.BoundedOperator.BOP_TYPE;
 import edu.casetools.dcase.m2nusmv.data.elements.Rule;
+import edu.casetools.dcase.m2nusmv.data.elements.RuleElement;
 import edu.casetools.dcase.m2nusmv.data.elements.Specification;
 import edu.casetools.dcase.m2nusmv.data.elements.State;
 import edu.casetools.dcase.m2nusmv.data.elements.Time;
@@ -97,13 +98,13 @@ public class M2NuSMV {
 		List<State> auxiliaryStates = new ArrayList<>();
 		auxiliaryStates = getStates(auxiliaryStates, data.getStrs());
 		for (State state : auxiliaryStates) {
-		    if (!state.isIndependent())
+		    if (!state.isIndependent() && !consequentOnOtherRule(state.getName(),data.getNtrs()))
 			writeInitialisation(state.getName() + "_aux", state.getInitialValue());
 		}
 		auxiliaryStates = new ArrayList<>();
 		auxiliaryStates = getStates(auxiliaryStates, data.getNtrs());
 		for (State state : auxiliaryStates) {
-		    if (!state.isIndependent())
+		    if (!state.isIndependent()&&!consequentOnOtherRule(state.getName(),data.getStrs()))
 			writeInitialisation(state.getName(), state.getInitialValue());
 		}
     }
@@ -176,24 +177,41 @@ public class M2NuSMV {
     }
 
     protected void writeNTR(Rule rule) throws IOException {
-		writer.append("\tnext(" + rule.getConsequent().getName() + ") := case\n");
+		writer.append("\tnext(" + rule.getConsequent().getName()+checkIfAuxiliar(rule.getConsequent()) + ") := case\n");
 		writeRule(rule);
 		writeSameConsequentRules(rule);
 		writer.append("\t\t\t\t\t\tTRUE : " + rule.getConsequent().getName() + ";\n");
 		writer.append("\t\t\t\t    esac;\n\n");
     }
 
-    protected void writeSTR(Rule rule) throws IOException {
+    private String checkIfAuxiliar(RuleElement consequent) {
+    	if(consequentOnOtherRule(consequent.getName(),data.getStrs())){
+    		return "_aux";
+    	} else return "";
+	}
+
+	protected void writeSTR(Rule rule) throws IOException {
 		writer.append("\t" + rule.getConsequent().getName() + " := case\n");
 		writeRule(rule);
 		writeSameConsequentRules(rule);
 		writer.append("\t\t\t\tTRUE : " + rule.getConsequent().getName() + "_aux;\n");
 		writer.append("\t\t\t  esac;\n\n");
-		writer.append(
-			"\tnext(" + rule.getConsequent().getName() + "_aux) := " + rule.getConsequent().getName() + ";\n\n");
+		if(!consequentOnOtherRule(rule.getConsequent().getName(),data.getNtrs()))
+			writer.append(
+					"\tnext(" + rule.getConsequent().getName() + "_aux) := " + rule.getConsequent().getName() + ";\n\n");
     }
 
-    private void writeSameConsequentRules(Rule rule) throws IOException {
+	private boolean consequentOnOtherRule(String consequentName, List<Rule> rules) {
+		boolean consequentOnOtherNTR = false;
+		for(Rule rule : rules){
+			if(rule.getConsequent().getName().equals(consequentName)){
+				consequentOnOtherNTR = true;
+			}
+		}
+		return consequentOnOtherNTR;
+	}
+
+	private void writeSameConsequentRules(Rule rule) throws IOException {
 		for (Rule sameConsequentRule : rule.getSameConsequentRules()) {
 		    writeRule(sameConsequentRule);
 		}
